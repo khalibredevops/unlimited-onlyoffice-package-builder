@@ -6,8 +6,8 @@ on:
       - builds-debian-11/*
 
 env:
-  DEBIAN_PACKAGE_SUFFIX: -btactic
-  TAG_SUFFIX: -btactic
+  DEBIAN_PACKAGE_SUFFIX: -khalibre
+  TAG_SUFFIX: -khalibre
   DISTRO_FULLNAME: Debian 11
   DISTRO_TAG_PREFIX: debian-11
 
@@ -17,8 +17,7 @@ jobs:
       matrix:
         TARGET_DISTRO: [ "debian-11" ]
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    permissions: write-all
     steps:
       - name: Free Space - Init
         run: |
@@ -60,7 +59,7 @@ jobs:
           df -h
       - name: Free Space - Remove docker images
         run: |
-          docker rmi $(docker image ls -aq)
+          docker rmi $(docker image ls -aq) || true
           df -h
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -104,7 +103,7 @@ jobs:
       - name: Release
         uses: crowbarmaster/GH-Automatic-Releases@v1.6.0
         with:
-          repo_token: ${{ github.token }}
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           generate_notes: false
           automatic_release_tag: onlyoffice-unlimited-build-${{ env.DISTRO_TAG_PREFIX }}/${{ steps.split-tag.outputs.version }}
